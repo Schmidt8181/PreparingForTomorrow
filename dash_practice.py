@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 
-df = pd.read_csv('/Users/Beba/Food_price_indices_data_jul.csv')
+df = pd.read_csv('Food_price_indices_data_jul.csv')
 app = dash.Dash()
 
 app.layout = html.Div(children=[
