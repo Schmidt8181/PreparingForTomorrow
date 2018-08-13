@@ -8,16 +8,23 @@ After2005 = df[192:]
 app = dash.Dash()
 
 app.layout = html.Div(children=[
-    html.H1(children='WOW I\'m making a webpage!',
-        style={'text-align': 'center',
-                'color': 'rgb(199,0,57)',
-                'background-color': 'rgb(62,60,60)'
-                }),
-
+    html.H1(children='Thinkful DataScience Final Capstone',
+        style={'text-align': 'center'}),
     html.Div(
     children='''
-        Dash: A web application framework for Python.
+        In this capstone, I would like to build a dashboard as a proof of concept
+        that allows a user to choose a food item from a limited drop down menu
+        that will then show them the recent local prices of said food item and forecast
+        if that item will be going up or down in price. Project is still pending approval.
     '''),
+    html.Div(children=[
+        dcc.Dropdown(
+        options=[
+            {'label': 'Foo', 'value': 'foo'},
+            {'label': 'Bar', 'value': 'bar'},
+            {'label': 'Foo2', 'value': 'foo2'}
+            ],
+            value='Foo')]),
     html.Div(children=[
         dcc.Graph(id='MeatSugar-graph',
             figure={
