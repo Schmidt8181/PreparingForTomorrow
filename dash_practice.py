@@ -20,9 +20,16 @@ app.layout = html.Div(children=[
     html.Div(children=[
         dcc.Dropdown(
         options=[
-            {'label': 'Foo', 'value': 'foo'},
-            {'label': 'Bar', 'value': 'bar'},
-            {'label': 'Foo2', 'value': 'foo2'}
+            {'label': 'Iceberg Lettuce', 'value': 'iceberg lettuce'},
+            {'label': 'Romain Lettuce', 'value': 'bar'},
+            {'label': 'Strawberries, 1lb', 'value': 'bar'},
+            {'label': 'Apple, Pink Lady', 'value': 'bar'},
+            {'label': 'Apple, Red Delicious', 'value': 'bar'},
+            {'label': 'Apple, Granny Smith', 'value': 'bar'},
+            {'label': 'Carrots', 'value': 'bar'},
+            {'label': 'Onions, Red', 'value': 'bar'},
+            {'label': 'Onions, White', 'value': 'bar'},
+            {'label': 'Sweet Potato', 'value': 'foo2'}
             ],
             value='Foo')]),
     html.Div(children=[
@@ -32,7 +39,7 @@ app.layout = html.Div(children=[
                     {'x': After2005.Date, 'y': After2005['Meat Price Index'], 'type': 'line', 'name': 'Meat Price Index'},
                     {'x': After2005.Date, 'y': After2005['Sugar Price Index'], 'type': 'line', 'name': 'Sugar Price Index'}
                     ],
-                'layout': {'title': 'Dash Data Visualization WOO!'}
+                'layout': {'title': 'Current Prices'}
                     },
             style={'width': '600', 'display': 'inline-block'}),
         dcc.Graph(id='DairyOilsCereals-graph',
@@ -45,7 +52,7 @@ app.layout = html.Div(children=[
                     {'x': After2005.Date, 'y': After2005['Cereals Price Index'],
                     'type': 'line', 'name': 'Cereals Price Index'},
                     ],
-                'layout': {'title': 'Dash Data Visualization 2 WOO WOO!'}
+                'layout': {'title': 'Price Forecast'}
                     },
             style={'width': '600', 'display': 'inline-block'}),
         ], style={'display': 'inline-block'})
