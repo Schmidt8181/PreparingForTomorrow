@@ -20,11 +20,11 @@ app.layout = html.Div(children=[
     html.Div(children=[
         dcc.Dropdown(
         options=[
-            {'label': 'All', 'value': 'iceberg lettuce'},
-            {'label': 'Oil', 'value': 'bar'},
-            {'label': 'Cereal', 'value': 'bar'},
-            {'label': 'Sugar', 'value': 'bar'},
-            {'label': 'Meat', 'value': 'bar'},
+            {'label': 'All', 'value': 'Global_Index'},
+            {'label': 'Oil', 'value': 'Oil_Index'},
+            {'label': 'Cereal', 'value': 'Cereal_Index'},
+            {'label': 'Sugar', 'value': 'Sugar_Index'},
+            {'label': 'Meat', 'value': 'Meat_Index'},
 
             ],
             value='All')]),
