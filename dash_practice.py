@@ -20,29 +20,24 @@ app.layout = html.Div(children=[
     html.Div(children=[
         dcc.Dropdown(
         options=[
-            {'label': 'Iceberg Lettuce', 'value': 'iceberg lettuce'},
-            {'label': 'Romain Lettuce', 'value': 'bar'},
-            {'label': 'Strawberries, 1lb', 'value': 'bar'},
-            {'label': 'Apple, Pink Lady', 'value': 'bar'},
-            {'label': 'Apple, Red Delicious', 'value': 'bar'},
-            {'label': 'Apple, Granny Smith', 'value': 'bar'},
-            {'label': 'Carrots', 'value': 'bar'},
-            {'label': 'Onions, Red', 'value': 'bar'},
-            {'label': 'Onions, White', 'value': 'bar'},
-            {'label': 'Sweet Potato', 'value': 'foo2'}
+            {'label': 'All', 'value': 'iceberg lettuce'},
+            {'label': 'Oil', 'value': 'bar'},
+            {'label': 'Cereal', 'value': 'bar'},
+            {'label': 'Sugar', 'value': 'bar'},
+            {'label': 'Meat', 'value': 'bar'},
+
             ],
-            value='Foo')]),
+            value='All')]),
     html.Div(children=[
-        dcc.Graph(id='MeatSugar-graph',
+        dcc.Graph(id='current',
             figure={
                 'data': [
-                    {'x': After2005.Date, 'y': After2005['Meat Price Index'], 'type': 'line', 'name': 'Meat Price Index'},
-                    {'x': After2005.Date, 'y': After2005['Sugar Price Index'], 'type': 'line', 'name': 'Sugar Price Index'}
+                    {'x': After2005.Date, 'y': After2005['Meat Price Index'], 'type': 'line', 'name': 'Meat Price Index'}
                     ],
                 'layout': {'title': 'Current Prices'}
                     },
             style={'width': '600', 'display': 'inline-block'}),
-        dcc.Graph(id='DairyOilsCereals-graph',
+        dcc.Graph(id='predicted',
             figure={
                 'data': [
                     {'x': After2005.Date, 'y': After2005['Dairy Price Index'],
