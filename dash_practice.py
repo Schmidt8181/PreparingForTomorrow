@@ -18,21 +18,29 @@ app.layout = html.Div(children=[
         if that item will be going up or down in price. Project is still pending approval.
     '''),
     html.Div(children=[
-        dcc.Dropdown(
+        dcc.Dropdown(id='drop_down'
         options=[
             {'label': 'All', 'value': 'Global_Index'},
             {'label': 'Oil', 'value': 'Oil_Index'},
             {'label': 'Cereal', 'value': 'Cereal_Index'},
             {'label': 'Sugar', 'value': 'Sugar_Index'},
+            {'label': 'Dairy', 'value': 'Dairy_Index'},
             {'label': 'Meat', 'value': 'Meat_Index'},
 
             ],
-            value='All')]),
-    html.Div(children=[
+            value='')]),
+
+])
+@app.callback(
+    Output(component_id='graphs', component_property='children'),
+    [Input(component_id='drop_down', component_property='value')]
+)
+def update_output_div(input_value):
+    return html.Div(children=[id='graphs',
         dcc.Graph(id='current',
             figure={
                 'data': [
-                    {'x': After2005.Date, 'y': After2005['Meat Price Index'], 'type': 'line', 'name': 'Meat Price Index'}
+                    {'x': After2005.Date, 'y': (callback input), 'type': 'line', 'name': 'Meat Price Index'}
                     ],
                 'layout': {'title': 'Current Prices'}
                     },
@@ -40,18 +48,14 @@ app.layout = html.Div(children=[
         dcc.Graph(id='predicted',
             figure={
                 'data': [
-                    {'x': After2005.Date, 'y': After2005['Dairy Price Index'],
-                    'type': 'line', 'name': 'Dairy Price Index'},
-                    {'x': After2005.Date, 'y': After2005['Oils Price Index'],
-                    'type': 'line', 'name': 'Oils Price Index'},
-                    {'x': After2005.Date, 'y': After2005['Cereals Price Index'],
-                    'type': 'line', 'name': 'Cereals Price Index'},
+                    {'x': , 'y': ,
+                    'type': 'line', 'name': 'Predicted Prices'}
                     ],
                 'layout': {'title': 'Price Forecast'}
                     },
             style={'width': '600', 'display': 'inline-block'}),
         ], style={'display': 'inline-block'})
-])
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
