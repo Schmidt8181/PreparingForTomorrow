@@ -4,24 +4,17 @@ import dash_html_components as html
 import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
+import pystan
+from fbprophet import Prophet
 
-'''
-    dcc.Graph(id='predicted',
-        figure={
-            'data': [
-                {'x': , 'y': ,
-                'type': 'line', 'name': 'Predicted Prices'}
-                ],
-            'layout': {'title': 'Price Forecast'}
-                },
-        style={'width': '600', 'display': 'inline-block'}),
-    ], style={'display': 'inline-block'}
-'''
-
-
-df = pd.read_csv('Food_price_indices_data_jul.csv')
+url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
+df = pd.read_csv(url)
 
 After2005 = df[192:]
+After2005['Date'] =pd.to_datetime(After2005['Date'])
+
+
+
 app = dash.Dash()
 
 app.layout = html.Div(children=[
@@ -46,7 +39,17 @@ app.layout = html.Div(children=[
             ],
             value='Food Price Index'),
          dcc.Graph(id='graphs',
-            style={'width': '600', 'display': 'inline-block'})
+            style={'width': '600', 'display': 'inline-block'}),
+        dcc.Graph(id='graph-with-slider'),
+        dcc.Slider(
+            id='year-slider',
+            min=df['year'].min(),
+            max=df['year'].max(),
+            value=df['year'].min(),
+            step=None,
+            marks={str(year): str(year) for year in df['year'].unique()}
+    )
+])
 ])
 ])
 
