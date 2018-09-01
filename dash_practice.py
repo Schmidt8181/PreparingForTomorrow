@@ -40,9 +40,10 @@ app.layout = html.Div(children=[
             value='Food Price Index'),
          dcc.Graph(id='graphs',
             style={'width': '600', 'display': 'inline-block'}),
-        dcc.Graph(id='graph-with-slider'),
-        dcc.Slider(
-            id='year-slider',
+         dcc.Graph(id='forcast_graph',
+            style={'width': '600', 'display': 'inline-block'}),
+         dcc.Slider(
+            id='year_slider',
             min=df['year'].min(),
             max=df['year'].max(),
             value=df['year'].min(),
@@ -66,7 +67,12 @@ def update_output_div(drop_down):
                 yaxis={'title': drop_down}
             )
             }
-
+@app.callback(
+    Output(component_id='forecast_graph', component_property='figure'),
+    [Input(component_id='year_slider', component_property='value')]
+)
+def update_output_div2(year-slider):
+    return #{put forecast stuff in here}
 
 if __name__ == '__main__':
     app.run_server(debug=True)
