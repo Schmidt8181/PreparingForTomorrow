@@ -10,9 +10,11 @@ from fbprophet import Prophet
 url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
 df = pd.read_csv(url)
 
-After2005 = df[192:]
+After2005 = df[192:].copy()
 After2005['Date'] =pd.to_datetime(After2005['Date'])
+After2005['Year'] = After2005['Date'].dt.year
 
+#After2005.head()
 
 
 app = dash.Dash()
@@ -38,21 +40,24 @@ app.layout = html.Div(children=[
             {'label': 'Meat Price Index', 'value': 'Meat Price Index'},
             ],
             value='Food Price Index'),
-         dcc.Graph(id='graphs',
+        dcc.Graph(id='graphs',
             style={'width': '600', 'display': 'inline-block'}),
-         dcc.Graph(id='forcast_graph',
-            style={'width': '600', 'display': 'inline-block'}),
-         dcc.Slider(
-            id='year_slider',
-            min=df['year'].min(),
-            max=df['year'].max(),
-            value=df['year'].min(),
-            step=None,
-            marks={str(year): str(year) for year in df['year'].unique()}
-    )
+        dcc.Graph(id='forecast_graph',
+            style={'width': '600', 'display': 'inline-block'})
+            ]),
+    #html.Div(children=[
+        #dcc.Slider(
+            #id='year_slider',
+            #min=After2005['Year'].min(),
+            #max=After2005['Year'].max(),
+            #value=After2005['Year'].min(),
+            #step=None,
+            #marks={str(year): str(year) for year in After2005['Year'].unique()}),
+
+
+
 ])
-])
-])
+
 
 @app.callback(
     Output(component_id='graphs', component_property='figure'),
@@ -69,10 +74,24 @@ def update_output_div(drop_down):
             }
 @app.callback(
     Output(component_id='forecast_graph', component_property='figure'),
-    [Input(component_id='year_slider', component_property='value')]
+    [Input(component_id='drop_down', component_property='value')]
 )
-def update_output_div2(year-slider):
-    return #{put forecast stuff in here}
+def update_output_div2(drop_down):
+    temp_df = pd.DataFrame()
+    temp_df['ds'] = After2005.Date
+    temp_df['y'] = After2005[drop_down]
+    m = Prophet(seasonality_mode='multiplicative').fit(temp_df)
+    future = m.make_future_dataframe(periods=140)
+    forecast = m.predict(future)
+    fig1 = m.plot(forecast)
+    fig2 = m.plot_components(forecast)
+    return {'data':[
+                    {'x': future, 'y': forecast, 'type':'line', 'name': drop_down}
+    ],
+            'layout': go.Layout(
+                xaxis={'title': "Month"},
+                yaxis={'title': drop_down}
+            )}
 
 if __name__ == '__main__':
     app.run_server(debug=True)
