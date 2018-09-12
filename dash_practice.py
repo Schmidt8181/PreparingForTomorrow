@@ -72,6 +72,8 @@ def update_output_div(drop_down):
                 yaxis={'title': drop_down}
             )
             }
+
+
 @app.callback(
     Output(component_id='forecast_graph', component_property='figure'),
     [Input(component_id='drop_down', component_property='value')]
@@ -81,12 +83,10 @@ def update_output_div2(drop_down):
     temp_df['ds'] = After2005.Date
     temp_df['y'] = After2005[drop_down]
     m = Prophet(seasonality_mode='multiplicative').fit(temp_df)
-    future = m.make_future_dataframe(periods=140)
+    future = m.make_future_dataframe(periods=60, freq="M")
     forecast = m.predict(future)
-    fig1 = m.plot(forecast)
-    fig2 = m.plot_components(forecast)
     return {'data':[
-                    {'x': future, 'y': forecast, 'type':'line', 'name': drop_down}
+                    {'x': forecast.ds, 'y': forecast.trend, 'type':'line', 'name': drop_down}
     ],
             'layout': go.Layout(
                 xaxis={'title': "Month"},
