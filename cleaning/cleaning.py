@@ -11,10 +11,10 @@ def clean_temperature_data_step1(df):
 
 def clean_temperature_data_step2(clean_temp_df):
     clean_temp_df.rename(columns={'variable': 'Month'}, inplace=True)
-    clean_temp_df['Day'] = 1
-    clean_temp_df['Date'] = np.nan
-    clean_temp_df['Date'] = pd.to_datetime(clean_temp_df[['Year','Month', 'Day']])
-    clean_temp_df['Temperature'] = pd.to_numeric(clean_temp_df['value'], errors='coerce')
+    clean_temp_df.loc[:,'Day'] = 1
+    clean_temp_df.loc[:,'Date'] = np.nan
+    clean_temp_df.loc[:,'Date'] = pd.to_datetime(clean_temp_df[['Year','Month', 'Day']])
+    clean_temp_df.loc[:,'Temperature'] = pd.to_numeric(clean_temp_df['value'], errors='coerce')
     clean_temp_df = clean_temp_df.drop(['Month', 'Day', 'Year', 'value'], axis=1)
     clean_temp_df.sort_values('Date', inplace=True)
     clean_temp_df = clean_temp_df.reset_index(drop=True)
