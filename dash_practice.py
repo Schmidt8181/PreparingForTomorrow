@@ -5,7 +5,7 @@ import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pystan
-from fbprophet import Prophet
+import pyflux as pf
 
 url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
 df = pd.read_csv(url)
@@ -80,13 +80,14 @@ def update_output_div(drop_down):
 )
 def update_output_div2(drop_down):
     temp_df = pd.DataFrame()
-    temp_df['ds'] = After2005.Date
-    temp_df['y'] = After2005[drop_down]
-    m = Prophet(seasonality_mode='multiplicative').fit(temp_df)
-    future = m.make_future_dataframe(periods=60, freq="M")
-    forecast = m.predict(future)
+    #temp_df['ds'] = After2005.Date
+    #temp_df['y'] = After2005[drop_down]
+    model = pf.ARIMA(data=temp_df, target=drop_down, ar=1, integ=1, ma=12, family=pf.Normal())
+    fitted = model.fit("M-H")
+    #future = m.make_future_dataframe(periods=60, freq="M")
+    forecast = fitted.predict(h=12)
     return {'data':[
-                    {'x': forecast.ds, 'y': forecast.trend, 'type':'line', 'name': drop_down}
+                    {'x': forecast.date, 'y': forecast.drop_down, 'type':'line', 'name': drop_down}
     ],
             'layout': go.Layout(
                 xaxis={'title': "Month"},
