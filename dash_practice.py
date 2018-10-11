@@ -9,7 +9,9 @@ import pyflux as pf
 
 url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
 df = pd.read_csv(url)
-
+indexed_df = clean_food_data.set_index(['Date'])
+train = indexed_df.loc['1990':'2016']
+test = indexed_df.loc['2017':'2018']
 After2005 = df[192:].copy()
 After2005['Date'] =pd.to_datetime(After2005['Date'])
 After2005['Year'] = After2005['Date'].dt.year
