@@ -7,14 +7,14 @@ import plotly.graph_objs as go
 import pystan
 import pyflux as pf
 
-url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
-df = pd.read_csv(url)
-indexed_df = clean_food_data.set_index(['Date'])
+#url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
+df = pd.read_csv('data/indexed_clean_df.csv')
+indexed_df = df.set_index(['Date'])
 train = indexed_df.loc['1990':'2016']
 test = indexed_df.loc['2017':'2018']
-After2005 = df[192:].copy()
-After2005['Date'] =pd.to_datetime(After2005['Date'])
-After2005['Year'] = After2005['Date'].dt.year
+#After2005 = df[192:].copy()
+#After2005['Date'] =pd.to_datetime(After2005['Date'])
+#After2005['Year'] = After2005['Date'].dt.year
 
 #After2005.head()
 
@@ -22,14 +22,11 @@ After2005['Year'] = After2005['Date'].dt.year
 app = dash.Dash()
 
 app.layout = html.Div(children=[
-    html.H1(children='Thinkful DataScience Final Capstone',
+    html.H1(children='Thinkful Data Science Final Capstone',
         style={'text-align': 'center'}),
     html.Div(
     children='''
-        In this capstone, I would like to build a dashboard as a proof of concept
-        that allows a user to choose a food item from a limited drop down menu
-        that will then show them the recent local prices of said food item and forecast
-        if that item will be going up or down in price.
+        With this forecasting tool you will be able to predict if the price of a kind of food will go up for down and allow for appropriate planning of the near fututre.
     '''),
     html.Div(children=[
         dcc.Dropdown(id='drop_down',
@@ -67,7 +64,7 @@ app.layout = html.Div(children=[
 )
 def update_output_div(drop_down):
     return {'data':[
-                    {'x': After2005.Date, 'y': After2005[drop_down], 'type': 'line', 'name': drop_down},
+                    {'x': df.Date, 'y': df[drop_down], 'type': 'line', 'name': drop_down},
                     ],
             'layout': go.Layout(
                 xaxis={'title': "Month"},
@@ -81,13 +78,10 @@ def update_output_div(drop_down):
     [Input(component_id='drop_down', component_property='value')]
 )
 def update_output_div2(drop_down):
-    temp_df = pd.DataFrame()
-    #temp_df['ds'] = After2005.Date
-    #temp_df['y'] = After2005[drop_down]
-    model = pf.ARIMA(data=temp_df, target=drop_down, ar=1, integ=1, ma=12, family=pf.Normal())
+    model = pf.ARIMA(data=df, target=drop_down, ar=10, integ=1, ma=0, family=pf.Normal())
     fitted = model.fit("M-H")
     #future = m.make_future_dataframe(periods=60, freq="M")
-    forecast = fitted.predict(h=12)
+    forecast = fitted.predict(h=3)
     return {'data':[
                     {'x': forecast.date, 'y': forecast.drop_down, 'type':'line', 'name': drop_down}
     ],
