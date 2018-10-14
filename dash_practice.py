@@ -4,11 +4,11 @@ import dash_html_components as html
 import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
-import pystan
 import pyflux as pf
 
 #url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
 df = pd.read_csv('data/indexed_clean_df.csv')
+df.head()
 indexed_df = df.set_index(['Date'])
 train = indexed_df.loc['1990':'2016']
 test = indexed_df.loc['2017':'2018']
@@ -38,7 +38,7 @@ app.layout = html.Div(children=[
             {'label': 'Dairy Prince Index', 'value': 'Dairy Price Index'},
             {'label': 'Meat Price Index', 'value': 'Meat Price Index'},
             ],
-            value='Food Price Index'),
+            value='Meat Price Index'),
         dcc.Graph(id='graphs',
             style={'width': '600', 'display': 'inline-block'}),
         dcc.Graph(id='forecast_graph',
@@ -78,12 +78,12 @@ def update_output_div(drop_down):
     [Input(component_id='drop_down', component_property='value')]
 )
 def update_output_div2(drop_down):
-    model = pf.ARIMA(data=df, target=drop_down, ar=10, integ=1, ma=0, family=pf.Normal())
-    fitted = model.fit("M-H")
-    #future = m.make_future_dataframe(periods=60, freq="M")
-    forecast = fitted.predict(h=3)
+    model = pf.ARIMA(data=df, target=drop_down, ar=10, integ=0, ma=0, family=pf.Normal())
+    fitted = model.fit("MLE")
+    forecast = model.predict(h=3)
+    future_dates = ["2018-07-01", "2018-08-01", "2018-09-01"]
     return {'data':[
-                    {'x': forecast.date, 'y': forecast.drop_down, 'type':'line', 'name': drop_down}
+                    {'x': future_dates, 'y': forecast[drop_down], 'type':'line', 'name': drop_down}
     ],
             'layout': go.Layout(
                 xaxis={'title': "Month"},
