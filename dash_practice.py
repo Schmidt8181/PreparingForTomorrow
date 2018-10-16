@@ -6,6 +6,21 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pyflux as pf
 
+from statsmodels.tsa.arima_model import ARIMAResults
+
+
+def load_models():
+    return {
+        "Sugar Price Index": ARIMAResults.load("model/SugarARIMA.pkl"),
+        "Meat Price Index": ARIMAResults.load("model/MeatARIMA.pkl"),
+        "Dairy Price Index": ARIMAResults.load("model/DairyARIMA.pkl"),
+        "Cereals Price Index": ARIMAResults.load("model/CerealsARIMA.pkl"),
+        "Oils Price Index": ARIMAResults.load("model/OilsARIMA.pkl")
+    }
+
+global model_dict
+model_dict = load_models()
+
 #url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
 df = pd.read_csv('data/indexed_clean_df.csv')
 df.head()
@@ -78,9 +93,11 @@ def update_output_div(drop_down):
     [Input(component_id='drop_down', component_property='value')]
 )
 def update_output_div2(drop_down):
-    model = pf.ARIMA(data=df, target=drop_down, ar=10, integ=0, ma=0, family=pf.Normal())
-    fitted = model.fit("MLE")
-    forecast = model.predict(h=3)
+    #model = pf.ARIMA(data=df, target=drop_down, ar=10, integ=0, ma=0, family=pf.Normal())
+    #fitted = model.fit("MLE")
+    model = model_dict[drop_down]
+    forecast, stderr, conf = model.forecast(steps = 3)
+    #forecast = model.predict(h=3)
     future_dates = ["2018-07-01", "2018-08-01", "2018-09-01"]
     return {'data':[
                     {'x': future_dates, 'y': forecast[drop_down], 'type':'line', 'name': drop_down}
