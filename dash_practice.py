@@ -21,18 +21,8 @@ def load_models():
 global model_dict
 model_dict = load_models()
 
-#url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
 df = pd.read_csv('data/indexed_clean_df.csv')
 df.head()
-indexed_df = df.set_index(['Date'])
-train = indexed_df.loc['1990':'2016']
-test = indexed_df.loc['2017':'2018']
-#After2005 = df[192:].copy()
-#After2005['Date'] =pd.to_datetime(After2005['Date'])
-#After2005['Year'] = After2005['Date'].dt.year
-
-#After2005.head()
-
 
 app = dash.Dash()
 
@@ -59,16 +49,6 @@ app.layout = html.Div(children=[
         dcc.Graph(id='forecast_graph',
             style={'width': '600', 'display': 'inline-block'})
             ]),
-    #html.Div(children=[
-        #dcc.Slider(
-            #id='year_slider',
-            #min=After2005['Year'].min(),
-            #max=After2005['Year'].max(),
-            #value=After2005['Year'].min(),
-            #step=None,
-            #marks={str(year): str(year) for year in After2005['Year'].unique()}),
-
-
 
 ])
 
@@ -93,11 +73,8 @@ def update_output_div(drop_down):
     [Input(component_id='drop_down', component_property='value')]
 )
 def update_output_div2(drop_down):
-    #model = pf.ARIMA(data=df, target=drop_down, ar=10, integ=0, ma=0, family=pf.Normal())
-    #fitted = model.fit("MLE")
     model = model_dict[drop_down]
     forecast, stderr, conf = model.forecast(steps = 3)
-    #forecast = model.predict(h=3)
     future_dates = ["2018-07-01", "2018-08-01", "2018-09-01"]
     return {'data':[
                     {'x': future_dates, 'y': forecast[drop_down], 'type':'line', 'name': drop_down}
