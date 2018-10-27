@@ -76,8 +76,9 @@ def update_output_div2(drop_down):
     model = model_dict[drop_down]
     forecast, stderr, conf = model.forecast(steps = 3)
     future_dates = ["2018-07-01", "2018-08-01", "2018-09-01"]
+    x_dates = range(len(forecast))
     return {'data':[
-                    {'x': future_dates, 'y': forecast[drop_down], 'type':'line', 'name': drop_down}
+                    {'x': future_dates, 'y': forecast, 'type':'line', 'name': drop_down}
     ],
             'layout': go.Layout(
                 xaxis={'title': "Month"},
