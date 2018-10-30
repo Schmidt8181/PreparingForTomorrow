@@ -4,30 +4,34 @@ import dash_html_components as html
 import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
-import pystan
-from fbprophet import Prophet
+import pyflux as pf
 
-url = 'https://raw.githubusercontent.com/Schmidt8181/ThinkfulCapstone/master/data/Food_price_indices_data_jul.csv'
-df = pd.read_csv(url)
+from statsmodels.tsa.arima_model import ARIMAResults
 
-After2005 = df[192:].copy()
-After2005['Date'] =pd.to_datetime(After2005['Date'])
-After2005['Year'] = After2005['Date'].dt.year
 
-#After2005.head()
+def load_models():
+    return {
+        "Sugar Price Index": ARIMAResults.load("model/SugarARIMA.pkl"),
+        "Meat Price Index": ARIMAResults.load("model/MeatARIMA.pkl"),
+        "Dairy Price Index": ARIMAResults.load("model/DairyARIMA.pkl"),
+        "Cereals Price Index": ARIMAResults.load("model/CerealsARIMA.pkl"),
+        "Oils Price Index": ARIMAResults.load("model/OilsARIMA.pkl")
+    }
 
+global model_dict
+model_dict = load_models()
+
+df = pd.read_csv('data/indexed_clean_df.csv')
+df.head()
 
 app = dash.Dash()
 
 app.layout = html.Div(children=[
-    html.H1(children='Thinkful DataScience Final Capstone',
+    html.H1(children='Thinkful Data Science Final Capstone',
         style={'text-align': 'center'}),
     html.Div(
     children='''
-        In this capstone, I would like to build a dashboard as a proof of concept
-        that allows a user to choose a food item from a limited drop down menu
-        that will then show them the recent local prices of said food item and forecast
-        if that item will be going up or down in price.
+        With this forecasting tool you will be able to predict if the price of a kind of food will go up for down and allow for appropriate planning of the near fututre.
     '''),
     html.Div(children=[
         dcc.Dropdown(id='drop_down',
@@ -39,22 +43,12 @@ app.layout = html.Div(children=[
             {'label': 'Dairy Prince Index', 'value': 'Dairy Price Index'},
             {'label': 'Meat Price Index', 'value': 'Meat Price Index'},
             ],
-            value='Food Price Index'),
+            value='Meat Price Index'),
         dcc.Graph(id='graphs',
             style={'width': '600', 'display': 'inline-block'}),
         dcc.Graph(id='forecast_graph',
             style={'width': '600', 'display': 'inline-block'})
             ]),
-    #html.Div(children=[
-        #dcc.Slider(
-            #id='year_slider',
-            #min=After2005['Year'].min(),
-            #max=After2005['Year'].max(),
-            #value=After2005['Year'].min(),
-            #step=None,
-            #marks={str(year): str(year) for year in After2005['Year'].unique()}),
-
-
 
 ])
 
@@ -65,7 +59,7 @@ app.layout = html.Div(children=[
 )
 def update_output_div(drop_down):
     return {'data':[
-                    {'x': After2005.Date, 'y': After2005[drop_down], 'type': 'line', 'name': drop_down},
+                    {'x': df.Date, 'y': df[drop_down], 'type': 'line', 'name': drop_down},
                     ],
             'layout': go.Layout(
                 xaxis={'title': "Month"},
@@ -79,14 +73,12 @@ def update_output_div(drop_down):
     [Input(component_id='drop_down', component_property='value')]
 )
 def update_output_div2(drop_down):
-    temp_df = pd.DataFrame()
-    temp_df['ds'] = After2005.Date
-    temp_df['y'] = After2005[drop_down]
-    m = Prophet(seasonality_mode='multiplicative').fit(temp_df)
-    future = m.make_future_dataframe(periods=60, freq="M")
-    forecast = m.predict(future)
+    model = model_dict[drop_down]
+    forecast, stderr, conf = model.forecast(steps = 3)
+    future_dates = ["2018-07-01", "2018-08-01", "2018-09-01"]
+    x_dates = range(len(forecast))
     return {'data':[
-                    {'x': forecast.ds, 'y': forecast.trend, 'type':'line', 'name': drop_down}
+                    {'x': future_dates, 'y': forecast, 'type':'line', 'name': drop_down}
     ],
             'layout': go.Layout(
                 xaxis={'title': "Month"},
