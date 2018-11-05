@@ -4,8 +4,9 @@ import dash_html_components as html
 import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
-import pyflux as pf
-
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tsa.arima_model import ARIMAResults
 
 
@@ -23,6 +24,7 @@ model_dict = load_models()
 
 df = pd.read_csv('data/indexed_clean_df.csv')
 df.head()
+
 
 app = dash.Dash()
 
@@ -57,7 +59,7 @@ app.layout = html.Div(children=[
     Output(component_id='graphs', component_property='figure'),
     [Input(component_id='drop_down', component_property='value')]
 )
-def update_output_div(drop_down):
+def update_historical_data(drop_down):
     return {'data':[
                     {'x': df.Date, 'y': df[drop_down], 'type': 'line', 'name': drop_down},
                     ],
@@ -72,7 +74,7 @@ def update_output_div(drop_down):
     Output(component_id='forecast_graph', component_property='figure'),
     [Input(component_id='drop_down', component_property='value')]
 )
-def update_output_div2(drop_down):
+def update_forecast_data(drop_down):
     model = model_dict[drop_down]
     forecast, stderr, conf = model.forecast(steps = 3)
     future_dates = ["2018-07-01", "2018-08-01", "2018-09-01"]
